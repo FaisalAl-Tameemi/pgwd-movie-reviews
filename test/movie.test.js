@@ -230,8 +230,10 @@ describe('In `/lib/movie.js`', () => {
         rating: 5
       });
 
+      const original = m.reviews.length;
       m.removeReview(m.reviews[0].id);
-      should(m.reviews.length).be.eql(0);
+
+      original.should.be.above(m.reviews.length);
     });
 
     it('should successfully remove a review to the movie', () => {
