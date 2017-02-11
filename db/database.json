@@ -1,3 +1,28 @@
 {
-  "movies": []
+  "movies": [
+    {
+      "id": "ry4gS0V2Ox",
+      "title": "Coding Documentary",
+      "release_date": "2016-12-01",
+      "reviews": []
+    },
+    {
+      "id": "H1BeBCVhOl",
+      "title": "Coding Documentary",
+      "release_date": "2016-12-01",
+      "reviews": []
+    },
+    {
+      "id": "HyUlH0V2dl",
+      "title": "Coding Documentary",
+      "release_date": "2016-12-01",
+      "reviews": []
+    },
+    {
+      "id": "SyugrRNhux",
+      "title": "Coding Documentary",
+      "release_date": "2016-12-01",
+      "reviews": []
+    }
+  ]
 }

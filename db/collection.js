@@ -44,12 +44,20 @@ const initCollection = (collection, options) => {
     return jsonDB.get(collection).remove({ id }).value();
   };
 
+  /**
+   * Returns the count of the collection entries
+   */
+  const count = () => {
+    return jsonDB.get(collection).value().length;
+  };
+
   // return the basic 3 methods for the collection specified
   return {
     insert,
     find,
     update,
-    remove
+    remove,
+    count
   };
 }
 

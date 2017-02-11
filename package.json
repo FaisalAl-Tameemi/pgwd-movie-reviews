@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/FaisalAl-Tameemi/pgwd-movie-reviews#readme",
   "dependencies": {
+    "expect": "^1.20.2",
     "lodash": "^4.17.4",
     "lowdb": "^0.14.0",
     "mocha": "^3.2.0",

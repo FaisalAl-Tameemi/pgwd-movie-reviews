@@ -1,43 +1,167 @@
 'use strict';
 
+const expect = require('expect');
 const should = require('should');
+const dbHelper = require('../db/collection');
+const movieUtil = require('../lib/movie');
 
-describe('Movie (`/lib/movie.js`)', function() {
+// init a movie collection
+const movies = dbHelper.initCollection('movies', { reset: true });
 
-  describe('#build()', function() {
-    it('should be able to accept an object which contains a `title` and `release_date`');
-    it('`release_date` must be a date string,  ex: "2016-12-01"');
-    it('should throw an error if `title` or `release_date` is missing');
-    it('should return an object containing an auto generated short ID under the `id` key');
-    it('should return an object containing the `title`, `release_date` and a empty array under the key `reviews`');
-    it('should return an object containing the needed methods (`save`, `remove`, `addReview` and `removeReview`)');
-    it('should NOT save the movie in the database');
+describe('In `/lib/movie.js`', () => {
+
+  describe('.build()', () => {
+    it('should be able to accept an object which contains a `title` and `release_date`', () => {
+      const m = movieUtil.build({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      m.should.have.ownProperty('title');
+      m.should.have.ownProperty('release_date');
+    });
+
+    // it('should throw an error if `title` or `release_date` is missing');
+    it('should return an object containing an auto generated short ID under the `id` key', () => {
+      const m = movieUtil.build({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      m.should.have.ownProperty('id').and.be.type('string');
+    });
+
+    it('returned object should also contain an empty array under the key `reviews`', () => {
+      const m = movieUtil.build({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      m.should.have.ownProperty('reviews')
+        .and.be.type('object')
+        .and.have.ownProperty('length')
+        .and.be.eql(0);
+    });
+
+    it('should return an object containing the needed methods (`save`, `remove`, `addReview` and `removeReview`)', () => {
+      const m = movieUtil.build({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      m.should.have.ownProperty('save').and.be.type('function');
+      m.should.have.ownProperty('remove').and.be.type('function');
+      m.should.have.ownProperty('addReview').and.be.type('function');
+      m.should.have.ownProperty('removeReview').and.be.type('function');
+    });
+
+    it('should NOT save the movie in the database', () => {
+      const original = movies.count();
+
+      const m = movieUtil.build({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      movies.count().should.not.be.above(original);
+    });
   });
 
-  describe('#create()', function() {
-    it('should leverage the build method to initialize the movie object then return it');
-    it('should save (insert) the movie into the database');
+  describe('#create()', () => {
+    it('should leverage the build method to initialize the movie object then return it', () => {
+      const m = movieUtil.create({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      m.should.have.ownProperty('id');
+      m.should.have.ownProperty('title');
+      m.should.have.ownProperty('release_date');
+      m.should.have.ownProperty('reviews').and.be.type('object').and.have.ownProperty('length');
+      m.should.have.ownProperty('save').and.be.type('function');
+      m.should.have.ownProperty('remove').and.be.type('function');
+      m.should.have.ownProperty('addReview').and.be.type('function');
+      m.should.have.ownProperty('removeReview').and.be.type('function');
+    });
+
+    it('should save (insert) the movie into the database', () => {
+      const original = movies.count();
+
+      const m = movieUtil.create({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      movies.count().should.be.above(original);
+    });
   });
 
-  describe('#find()', function() {
-    it('should accept an `id` as a parameter');
-    it('should successfully return the found movie');
-    it('should return the built object, must include the instance methods (ex: `addReview`)');
-    it('should return -1 if the item is not found');
+  describe('.find()', () => {
+    it('should accept an `id` as a parameter and successfully return the found movie', () => {
+      const m = movieUtil.create({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      const found = movieUtil.find(m.id);
+
+      found.should.have.ownProperty('id');
+      found.should.have.ownProperty('title');
+      found.should.have.ownProperty('release_date');
+      found.should.have.ownProperty('reviews')
+        .and.be.type('object')
+        .and.have.ownProperty('length')
+        .and.be.eql(0);
+    });
+
+    it('should return the built object, must include the instance methods (ex: `addReview`)', () => {
+      const m = movieUtil.create({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      const found = movieUtil.find(m.id);
+
+      found.should.have.ownProperty('save').and.be.type('function');
+      found.should.have.ownProperty('remove').and.be.type('function');
+      found.should.have.ownProperty('addReview').and.be.type('function');
+      found.should.have.ownProperty('removeReview').and.be.type('function');
+    });
+
+    it('should return -1 if the item is not found', () => {
+      const m = movieUtil.find('3r14');
+
+      m.should.be.eql(-1);
+    });
   });
 
-  describe('#remove()', function() {
-    it('should accept an `id` as a parameter');
-    it('should successfully remove the item from the database');
+  describe('movie.save()', () => {
+    it('should save the updated object into the database');
   });
 
-  describe('#addReview()', function() {
-    it('......'); // TODO: add more tests
+  describe('movie.remove()', () => {
+    it('should successfully remove the item from the database', () => {
+      const m = movieUtil.create({
+        title: 'Coding Documentary',
+        release_date: '2016-12-01'
+      });
+
+      const original = movies.count();
+
+      m.remove();
+
+      original.should.be.above(movies.count());
+    });
+  });
+
+  describe('movie.addReview()', () => {
+    it('should accept as a parameter the `data` object which contains a `reviewer` and `rating` keys');
+    it('should throw an error, `reviewer must be a string`, if the `reviewer` field is not a string');
+    it('should throw an error, `rating must be a number`, if the `reviewer` field is not a string');
     it('should successfully add a review to the movie');
   });
 
-  describe('#removeReview()', function() {
-    it('......'); // TODO: add more tests
+  describe('movie.removeReview()', () => {
     it('should accept as a parameter the id of the review to delete');
     it('should successfully remove a review to the movie');
   });
