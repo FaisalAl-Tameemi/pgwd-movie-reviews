@@ -219,8 +219,8 @@ describe('In `/lib/movie.js`', () => {
   });
 
   describe('movie.removeReview()', () => {
-    it('should accept as a parameter the id of the review to delete,
-        and successfully remove a review to the movie', () => {
+    it(`should accept as a parameter the id of the review to delete,
+        and successfully remove a review to the movie`, () => {
       const m = movieUtil.create({
         title: 'Coding Documentary',
         release_date: '2016-12-01'
